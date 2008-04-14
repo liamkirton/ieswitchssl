@@ -1,0 +1,53 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// IeSwitchSsl
+//
+// Copyright ©2008 Liam Kirton <liam@int3.ws>
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// SspiHook.h
+//
+// Created: 15/02/2008
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#pragma once
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#define SECURITY_WIN32
+
+#include <windows.h>
+
+#include <schnlsp.h>
+#include <security.h>
+
+#include <vector>
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+class SspiHook
+{
+public:
+	static SspiHook &GetInstance();
+
+	bool bHook_;
+	bool bCertVerification_;
+
+	DWORD dwProtocols_;
+	DWORD dwCiphers_;
+	std::vector<ALG_ID> supportedAlgorithms_;
+
+	ALG_ID hookSupportedAlgorithmsBuffer[13];
+
+private:
+	SspiHook();
+	~SspiHook();
+
+	void InstallHooks();
+	void UninstallHooks();
+
+	void InstallPrologueHook(unsigned char *lpFunction, unsigned char *lpHook);
+	void InstallEpilogueHook(unsigned char *lpFunction, unsigned char *lpHook);
+	void UninstallPrologueHook(unsigned char *lpFunction, unsigned char *lpHook);
+	void UninstallEpilogueHook(unsigned char *lpFunction, unsigned char *lpHook);
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
